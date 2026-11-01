@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "apender"
+require "optparse"
+
+options = {}
+
+parser = OptionParser.new do |opts|
+  opts.banner = "Usage: append -p PATH (-c CONTENT | -n)"
+
+  opts.on("-p PATH", "--path PATH", "File path") do |path|
+    options[:path] = path
+  end
+
+  opts.on("-c CONTENT", "--content CONTENT", "Content to append") do |content|
+    options[:content] = content
+  end
+
+  opts.on("-n", "--null", "Append an empty line") do
+    options[:null] = true
+  end
+end
+
+begin
+  parser.parse!
+
+  raise OptionParser::MissingArgument, "-p PATH" unless options[:path]
+
+  if options.key?(:content) == !!options[:null]
+    raise OptionParser::InvalidArgument,
+          "Use either -c CONTENT or -n, not both"
+  end
+
+  if options[:null]
+    Apender.newline(options[:path])
+  else
+    Apender.append(options[:path], options[:content])
+  end
+
+rescue OptionParser::ParseError, Apender::Error => e
+  warn "append: #{e.message}"
+  exit 1
+end
+
