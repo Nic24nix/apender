@@ -8,3 +8,10 @@
 /vendor/
 /Gemfile.lock
 *.gem
+# Build artifacts
+*.gem
+*.pkg.tar.zst
+.SRCINFO
+src/
+/apender/
+compras.txt

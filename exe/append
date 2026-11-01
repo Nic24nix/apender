@@ -7,7 +7,7 @@ require "optparse"
 options = {}
 
 parser = OptionParser.new do |opts|
-  opts.banner = "Usage: append -p PATH (-c CONTENT | -n)"
+  opts.banner = "Usage: append -p PATH (-c CONTENT | -n) [-l LINE] [-a]"
 
   opts.on("-p PATH", "--path PATH", "File path") do |path|
     options[:path] = path
@@ -19,6 +19,14 @@ parser = OptionParser.new do |opts|
 
   opts.on("-n", "--null", "Append an empty line") do
     options[:null] = true
+  end
+
+  opts.on("-l LINE", "--line LINE", Integer, "Target line number") do |line|
+    options[:line] = line
+  end
+
+  opts.on("-a", "--add", "Add content to the existing line") do
+    options[:add] = true
   end
 end
 
@@ -32,10 +40,23 @@ begin
           "Use either -c CONTENT or -n, not both"
   end
 
+  if options[:add] && !options[:line]
+    raise OptionParser::InvalidArgument, "-a requires -l LINE"
+  end
+
+  if options[:line] && options[:null]
+    raise OptionParser::InvalidArgument, "-l cannot be used with -n"
+  end
+
   if options[:null]
     Apender.newline(options[:path])
   else
-    Apender.append(options[:path], options[:content])
+    Apender.append(
+      options[:path],
+      options[:content],
+      line: options[:line],
+      add: !!options[:add]
+    )
   end
 
 rescue OptionParser::ParseError, Apender::Error => e

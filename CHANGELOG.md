@@ -4,6 +4,24 @@ All notable changes to Apender are documented in this file.
 
 This project follows a simple versioning format based on [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-11-01
+
+### Added
+- Replace specific lines using `-l` or `--line`.
+- Add content to existing lines using `-a` or `--add`.
+- Automatically create missing lines when targeting a line beyond the end of a file.
+- Add automated tests for the main functionality.
+
+### Changed
+- Expand command-line help with the new options.
+- Improve project metadata and documentation.
+
+### Notes
+- Line numbers start at 1.
+- `-a` requires `-l`.
+- `-n` cannot be combined with `-l`.
+- Content written to a specific line must be a single line.
+
 ## [0.1.0] - 2026-11-01
 
 ### Added
